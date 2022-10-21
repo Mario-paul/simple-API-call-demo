@@ -4,6 +4,7 @@ import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.example.simpleapicalldemo.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
@@ -96,8 +97,15 @@ class MainActivity : AppCompatActivity() {
 
                     // Runs code on UI thread after background job is done
                     runOnUiThread {
+
                         cancelProgressDialog()
                         Log.i("JSON RESPONSE RESULT", result)
+
+                        binding.textViewResult.text = result // add result to UI
+                        binding.textViewResult.visibility = View.VISIBLE
+                        binding.textViewHelloWorld.visibility = View.GONE
+                        binding.textViewInstructions.visibility = View.GONE
+
                     }
 
                 } catch (e: SocketTimeoutException) {
