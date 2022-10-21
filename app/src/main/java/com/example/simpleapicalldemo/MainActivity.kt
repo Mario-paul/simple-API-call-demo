@@ -8,7 +8,6 @@ import androidx.lifecycle.lifecycleScope
 import com.example.simpleapicalldemo.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -40,18 +39,16 @@ class MainActivity : AppCompatActivity() {
 
             showProgressDialog()
 
-            lifecycleScope.launch {
-                doInBackground() // execute code in the background
+            lifecycleScope.launch(Dispatchers.IO) {
+                openConnectionAndGetText() // execute code in the background
             }
 
         }
 
-        suspend fun doInBackground(): String {
+        fun openConnectionAndGetText(): String {
 
             var result: String
             var connection: HttpURLConnection? = null
-
-            withContext(Dispatchers.IO) {
 
                 try {
 
@@ -59,29 +56,33 @@ class MainActivity : AppCompatActivity() {
                     // secret delete link -- warning, clicking this link will delete the above Mocky:
                     // https://designer.mocky.io/manage/delete/cf6e606a-6e63-4bf4-9a6e-b10dfeaf15db/LPjwBvWmFYf5xSpUCdq778Z9dq4jpmzPQWnb
 
-                    connection = url.openConnection() as HttpURLConnection?
-                    connection?.doInput = true
-                    connection?.doOutput = true
+                    // Attempt connection with remote server url
+                    connection = url.openConnection() as HttpURLConnection
+                    connection.doInput = true
+                    connection.doOutput = true
 
-                    val httpResult: Int? = connection?.responseCode
+                    val httpResult: Int = connection.responseCode // gets response code from remote connection
 
                     if (httpResult == HttpURLConnection.HTTP_OK) {
 
-                        val inputStream = connection?.inputStream
+                        val inputStream = connection.inputStream
 
                         val reader = BufferedReader(InputStreamReader(inputStream))
-                        val stringBuilder = StringBuilder()
-                        var line: String?
+                        val stringBuilder = StringBuilder() // the entire text will be saved here
+                        var line: String? // each line of text will be saved here temporarily
 
                         try {
+
+                            // Reads a line, then adds it to the stringBuilder in a new line
                             while (reader.readLine().also { line = it } != null) {
                                 stringBuilder.append(line + "\n")
                             }
+
                         } catch (e: IOException) {
                             e.printStackTrace()
                         } finally {
                             try {
-                                inputStream?.close()
+                                inputStream.close()
                             } catch (e: IOException) {
                                 e.printStackTrace()
                             }
@@ -90,9 +91,10 @@ class MainActivity : AppCompatActivity() {
                         result = stringBuilder.toString()
 
                     } else {
-                        result = connection?.responseMessage.toString()
+                        result = connection.responseMessage // return response code in case of negative response from server
                     }
 
+                    // Runs code on UI thread after background job is done
                     runOnUiThread {
                         cancelProgressDialog()
                         Log.i("JSON RESPONSE RESULT", result)
@@ -103,10 +105,8 @@ class MainActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     result = "Error: " + e.message
                 } finally {
-                    connection?.disconnect()
+                    connection?.disconnect() // close connection
                 }
-
-            }
 
             return result
 
