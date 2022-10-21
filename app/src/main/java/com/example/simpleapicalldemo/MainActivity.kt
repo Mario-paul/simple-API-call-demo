@@ -5,6 +5,7 @@ import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.example.simpleapicalldemo.databinding.ActivityMainBinding
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -13,9 +14,13 @@ import java.net.SocketTimeoutException
 import java.net.URL
 
 class MainActivity : AppCompatActivity() {
+
+        private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         CallAPILoginAsyncTask().execute() // call our custom class
 
