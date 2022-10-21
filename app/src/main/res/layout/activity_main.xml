@@ -16,13 +16,26 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.44" />
+
+    <TextView
+        android:id="@+id/text_view_instructions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Press the button to make an API call and download the JSON website."
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_view_hello_world" />
 
     <Button
         android:id="@+id/button_api_call"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="API Call"
-        app:layout_constraintTop_toBottomOf="@id/text_view_hello_world" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_view_instructions" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

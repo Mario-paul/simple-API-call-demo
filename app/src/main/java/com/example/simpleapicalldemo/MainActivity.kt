@@ -15,14 +15,16 @@ import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
-        private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        CallAPILoginAsyncTask().execute() // call our custom class
+        binding.buttonApiCall.setOnClickListener {
+            CallAPILoginAsyncTask().execute() // call our custom class
+        }
 
     }
 
