@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">SimpleAPICallDemo</string>
+
+    <!--    activity_main.xml-->
+    <string name="text_view_hello_world">Hello World! This is a demo of Simple REST api call using AsyncTask.</string>
+    <string name="text_view_instructions">Press the button to make an API call and download the JSON website.</string>
+    <string name="button_api_call">API Call</string>
+
 </resources>
