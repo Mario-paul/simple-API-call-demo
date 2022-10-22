@@ -12,7 +12,7 @@ import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 import java.net.URL
 
-class GetStringFromURL(private val context: Context) {
+class CallAPILoginAsyncTask(private val context: Context) {
 
     private lateinit var customProgressDialog: Dialog
     private lateinit var mResultListener: ResultListener
@@ -94,13 +94,11 @@ class GetStringFromURL(private val context: Context) {
         val result = openConnectionAndGetText()
 
         withContext(Main) {
-
             if (result.isEmpty() || result == "") {
                 mResultListener.onError()
             } else {
                 mResultListener.onResultObtained(result)
             }
-
         }
 
     }

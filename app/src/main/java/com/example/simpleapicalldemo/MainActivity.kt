@@ -20,9 +20,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.buttonApiCall.setOnClickListener {
 
-            val apiCaller = GetStringFromURL(this)
+            val apiCaller = CallAPILoginAsyncTask(this) // initialize class instance
 
-            apiCaller.setResultListener(object : GetStringFromURL.ResultListener {
+            // Result listener will add result to UI as soon as obtained
+            apiCaller.setResultListener(object : CallAPILoginAsyncTask.ResultListener {
 
                 override fun onResultObtained(result: String?) {
                     binding.textViewResult.text = result // add result to UI
