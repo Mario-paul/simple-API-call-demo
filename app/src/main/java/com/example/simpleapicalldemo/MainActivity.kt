@@ -22,10 +22,10 @@ class MainActivity : AppCompatActivity() {
 
             val apiCaller = GetStringFromURL(this)
 
-            apiCaller.setAddressListener(object : GetStringFromURL.StringListener {
+            apiCaller.setResultListener(object : GetStringFromURL.ResultListener {
 
-                override fun onStringObtained(string: String?) {
-                    binding.textViewResult.text = string // add result to UI
+                override fun onResultObtained(result: String?) {
+                    binding.textViewResult.text = result // add result to UI
                     binding.textViewResult.visibility = View.VISIBLE
                     binding.textViewHelloWorld.visibility = View.GONE
                     binding.textViewInstructions.visibility = View.GONE
@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 
             })
 
+//            Start background task
             lifecycleScope.launch(Dispatchers.IO) {
                 apiCaller.getResult()
             }

@@ -15,7 +15,7 @@ import java.net.URL
 class GetStringFromURL(private val context: Context) {
 
     private lateinit var customProgressDialog: Dialog
-    private lateinit var mStringListener: StringListener
+    private lateinit var mResultListener: ResultListener
 
     private suspend fun openConnectionAndGetText(): String {
 
@@ -96,9 +96,9 @@ class GetStringFromURL(private val context: Context) {
         withContext(Main) {
 
             if (result.isEmpty() || result == "") {
-                mStringListener.onError()
+                mResultListener.onError()
             } else {
-                mStringListener.onStringObtained(result)
+                mResultListener.onResultObtained(result)
             }
 
         }
@@ -115,12 +115,12 @@ class GetStringFromURL(private val context: Context) {
         customProgressDialog.dismiss()
     }
 
-    fun setAddressListener(stringListener: StringListener) {
-        mStringListener = stringListener
+    fun setResultListener(resultListener: ResultListener) {
+        mResultListener = resultListener
     }
 
-    interface StringListener {
-        fun onStringObtained(string: String?)
+    interface ResultListener {
+        fun onResultObtained(result: String?)
         fun onError()
     }
 
