@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.BufferedReader
+import java.io.DataOutputStream
 import java.io.IOException
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
@@ -28,12 +29,12 @@ class MainActivity : AppCompatActivity() {
 
         binding.buttonApiCall.setOnClickListener {
 
-            CallAPILoginAsyncTask().getResult() // call our custom class
+            CallAPILoginAsyncTask("jane", "mypassword123456").getResult() // call our custom class
 
         }
     }
 
-    private inner class CallAPILoginAsyncTask {
+    private inner class CallAPILoginAsyncTask(val username: String, val password: String) {
 
         private lateinit var customProgressDialog: Dialog
 
@@ -65,6 +66,23 @@ class MainActivity : AppCompatActivity() {
                 connection.doInput = true
                 connection.doOutput = true
 
+                // POST / login code. for now it's untestable / unusable due to not having a server to login to
+                connection.instanceFollowRedirects = false
+                connection.requestMethod = "POST" // can set any request method, eg. GET, POST, etc
+                connection.setRequestProperty("Content-Type", "application/json")
+                connection.setRequestProperty("charset", "utf-8")
+                connection.setRequestProperty("Accept", "application/json")
+                connection.useCaches = false
+
+                val writeDataOutputStream = DataOutputStream(connection.outputStream)
+                val jsonRequest = JSONObject()
+                jsonRequest.put("username", username)
+                jsonRequest.put("password", password)
+                writeDataOutputStream.writeBytes(jsonRequest.toString())
+                writeDataOutputStream.flush()
+                writeDataOutputStream.close()
+
+                // Continue get json code
                 val httpResult: Int =
                     connection.responseCode // gets response code from remote connection
 
@@ -104,9 +122,9 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
 
                     cancelProgressDialog()
-                    Log.i("JSON RESPONSE RESULT", result)
+                    Log.i("JSON RESPONSE RESULT", result) // print whole json object in logcat
 
-                    binding.textViewResult.text = result // add result to UI
+                    binding.textViewResult.text = result // print whole json object to UI
                     binding.textViewResult.visibility = View.VISIBLE
                     binding.textViewHelloWorld.visibility = View.GONE
                     binding.textViewInstructions.visibility = View.GONE
