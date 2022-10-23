@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.example.simpleapicalldemo.databinding.ActivityMainBinding
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -66,7 +67,7 @@ class MainActivity : AppCompatActivity() {
                 connection.doInput = true
                 connection.doOutput = true
 
-                // POST / login code. for now it's untestable / unusable due to not having a server to login to
+                // POST / login code. This code is unusable due to not having a real server to login to
                 connection.instanceFollowRedirects = false
                 connection.requestMethod = "POST" // can set any request method, eg. GET, POST, etc
                 connection.setRequestProperty("Content-Type", "application/json")
@@ -129,8 +130,9 @@ class MainActivity : AppCompatActivity() {
                     binding.textViewHelloWorld.visibility = View.GONE
                     binding.textViewInstructions.visibility = View.GONE
 
-                    // Read and deconstruct JSON objects
+                    // Read and deconstruct JSON objects (manual/traditional way, without libraries)
                     val jsonObject = JSONObject(result)
+
                     val message = jsonObject.optString("message") // get String json object
                     Log.i("Message", message)
                     val userId = jsonObject.optInt("user_id")
@@ -161,6 +163,32 @@ class MainActivity : AppCompatActivity() {
                             Log.i("id", "$id")
                             Log.i("value", value)
                         }
+                    }
+
+                    Log.i("", "******************************************")
+
+                    // Read and deconstruct JSON objects (gson library way)
+                    val responseData = Gson().fromJson(result, ResponseData::class.java)
+                    Log.i("Message", responseData.message)
+                    Log.i("user_id", "${responseData.user_id}")
+                    Log.i("name", responseData.name)
+                    Log.i("email", responseData.email)
+                    Log.i("mobile", "${responseData.mobile}")
+
+                    Log.i(
+                        "is profile completed",
+                        "${responseData.profile_details.is_profile_completed}"
+                    )
+                    Log.i("rating", "${responseData.profile_details.rating}")
+
+                    Log.i("data_list size", "${responseData.data_list.size}")
+
+                    for (item in responseData.data_list.indices) {
+                        Log.i("element $item", "${responseData.data_list[item]}")
+
+                        Log.i("id", "${responseData.data_list[item].id}")
+                        Log.i("value", responseData.data_list[item].value)
+
                     }
 
                 }
