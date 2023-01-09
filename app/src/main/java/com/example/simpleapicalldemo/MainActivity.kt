@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.example.simpleapicalldemo.databinding.ActivityMainBinding
 import com.google.gson.Gson
@@ -86,6 +87,7 @@ class MainActivity : AppCompatActivity() {
                 // Continue get json code
                 val httpResult: Int =
                     connection.responseCode // gets response code from remote connection
+                Log.e("Connection code: ", httpResult.toString())
 
                 if (httpResult == HttpURLConnection.HTTP_OK) {
 
@@ -117,13 +119,15 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     result =
                         connection.responseMessage // return response code in case of negative response from server
+//                    Log.e("ERROR", result) // debugging
+                    cancelProgressDialog()
                 }
 
                 // Runs code on UI thread after background job is done
                 runOnUiThread {
 
                     cancelProgressDialog()
-                    Log.i("JSON RESPONSE RESULT", result) // print whole json object in logcat
+                    Log.i("JSON Response Result", result) // print whole json object in logcat
 
                     binding.textViewResult.text = result // print whole json object to UI
                     binding.textViewResult.visibility = View.VISIBLE
@@ -195,12 +199,24 @@ class MainActivity : AppCompatActivity() {
 
             } catch (e: SocketTimeoutException) {
                 result = "Error: Connection Timeout"
+                cancelProgressDialog()
+                Log.e("catch (e: SocketTim...)", result)
+                runOnUiThread {
+                    Toast.makeText(applicationContext, result, Toast.LENGTH_LONG).show()
+                }
             } catch (e: Exception) {
                 result = "Error: " + e.message
+                cancelProgressDialog()
+                Log.e("catch (e: Exception)", result)
+//                Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG).show() // CRASHES APP, RUN ON UI THREAD AS BELOW
+                runOnUiThread {
+                    Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG).show()
+                }
             } finally {
                 connection?.disconnect() // close connection
             }
 
+//            Log.e("result", result) // debugging
             return result
 
         }
