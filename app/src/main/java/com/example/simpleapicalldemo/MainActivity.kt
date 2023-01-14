@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
             CallAPILoginAsyncTask("jane", "mypassword123456").getResult() // call our custom class
 
         }
+        binding.buttonReset.setOnClickListener { resetUI() }
     }
 
     private inner class CallAPILoginAsyncTask(val username: String, val password: String) {
@@ -133,6 +134,8 @@ class MainActivity : AppCompatActivity() {
                     binding.textViewResult.visibility = View.VISIBLE
                     binding.textViewHelloWorld.visibility = View.GONE
                     binding.textViewInstructions.visibility = View.GONE
+                    binding.buttonApiCall.visibility = View.GONE
+                    binding.buttonReset.visibility = View.VISIBLE
 
                     // Read and deconstruct JSON objects (manual/traditional way, without libraries)
                     val jsonObject = JSONObject(result)
@@ -231,6 +234,15 @@ class MainActivity : AppCompatActivity() {
             customProgressDialog.dismiss()
         }
 
+    }
+
+    private fun resetUI() {
+        binding.textViewResult.text = "" // print whole json object to UI
+        binding.textViewResult.visibility = View.GONE
+        binding.textViewHelloWorld.visibility = View.VISIBLE
+        binding.textViewInstructions.visibility = View.VISIBLE
+        binding.buttonReset.visibility = View.GONE
+        binding.buttonApiCall.visibility = View.VISIBLE
     }
 
 }
