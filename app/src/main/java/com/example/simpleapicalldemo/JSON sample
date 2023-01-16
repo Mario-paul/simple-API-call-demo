@@ -1,0 +1,25 @@
+{
+  "message": "You have logged in successfully.",
+  "user_id": 123,
+  "name": "Jane",
+  "email": "jane@email.com",
+  "mobile": 1234567890,
+  "profile_details": {
+    "is_profile_completed": true,
+    "rating": 4.9
+  },
+  "data_list": [
+    {
+      "id": 1,
+      "value": "One"
+    },
+    {
+      "id": 2,
+      "value": "Two"
+    },
+    {
+      "id": 3,
+      "value": "Three"
+    }
+  ]
+}
