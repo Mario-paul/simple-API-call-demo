@@ -58,6 +58,9 @@ class MainActivity : AppCompatActivity() {
 
             try {
 
+                /**
+                 * Connect with remote API server
+                 */
                 val url = URL("https://run.mocky.io/v3/04a586e7-3861-42de-a7e8-09675fd7347b")
                 // secret delete link -- warning, clicking this link will delete the above Mocky:
                 // https://designer.mocky.io/manage/delete/cf6e606a-6e63-4bf4-9a6e-b10dfeaf15db/LPjwBvWmFYf5xSpUCdq778Z9dq4jpmzPQWnb
@@ -69,14 +72,14 @@ class MainActivity : AppCompatActivity() {
                 connection.doInput = true
                 connection.doOutput = true
 
-                // POST / login code. This code is unusable due to not having a real server to login to
+                /* POST / Login code. This code is useless here due to not having a real server to
+                log in to. You can use this code to log into an API server later on */
                 connection.instanceFollowRedirects = false
                 connection.requestMethod = "POST" // can set any request method, eg. GET, POST, etc
                 connection.setRequestProperty("Content-Type", "application/json")
                 connection.setRequestProperty("charset", "utf-8")
                 connection.setRequestProperty("Accept", "application/json")
                 connection.useCaches = false
-
                 val writeDataOutputStream = DataOutputStream(connection.outputStream)
                 val jsonRequest = JSONObject()
                 jsonRequest.put("username", username)
@@ -85,10 +88,12 @@ class MainActivity : AppCompatActivity() {
                 writeDataOutputStream.flush()
                 writeDataOutputStream.close()
 
-                // Continue get json code
+                /**
+                 * Retrieve JSON object from remote connection
+                 */
                 val httpResult: Int =
                     connection.responseCode // gets response code from remote connection
-                Log.e("Connection code: ", httpResult.toString())
+                Log.e("Response code", httpResult.toString())
 
                 if (httpResult == HttpURLConnection.HTTP_OK) {
 
@@ -119,7 +124,7 @@ class MainActivity : AppCompatActivity() {
 
                 } else {
                     result =
-                        connection.responseMessage // return response code in case of negative response from server
+                        connection.responseMessage // return response message when negative response from server
 //                    Log.e("ERROR", result) // debugging
                     cancelProgressDialog()
                 }
@@ -128,8 +133,11 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
 
                     cancelProgressDialog()
+                    Log.i("", "*********************************************************")
+                    Log.i("", "Printing whole JSON object in logcat")
                     Log.i("JSON Response Result", result) // print whole json object in logcat
 
+                    // Update UI with result
                     binding.textViewResult.text = result // print whole json object to UI
                     binding.textViewResult.visibility = View.VISIBLE
                     binding.textViewHelloWorld.visibility = View.GONE
@@ -137,34 +145,47 @@ class MainActivity : AppCompatActivity() {
                     binding.buttonApiCall.visibility = View.GONE
                     binding.buttonReset.visibility = View.VISIBLE
 
-                    // Read and deconstruct JSON objects (manual/traditional way, without libraries)
+                    /**
+                     * Read and deconstruct JSON object (manual/traditional way, without libraries)
+                     */
+                    Log.i("", "*********************************************************")
+                    Log.i("", "Deconstructing JSON object using manual/traditional method")
                     val jsonObject = JSONObject(result)
-
                     val message = jsonObject.optString("message") // get String json object
                     Log.i("Message", message)
                     val userId = jsonObject.optInt("user_id")
                     Log.i("User ID", "$userId") // get Int json object
                     val name = jsonObject.optString("name")
                     Log.i("User name", name)
+                    val email = jsonObject.optString("email")
+                    Log.i("email", email)
+                    val mobile = jsonObject.optString("mobile")
+                    Log.i("mobile", mobile)
 
-                    val profileDetailsObject =
-                        jsonObject.optJSONObject("profile_details") // get Object json object
+                    // Extract an object from inside our main JSON object
+                    val profileDetailsObject = jsonObject.optJSONObject("profile_details")
                     val isProfileCompleted =
-                        profileDetailsObject?.optBoolean("is_profile_completed") // get Boolean json object from our previous object
+                        profileDetailsObject?.optBoolean("is_profile_completed") // get Boolean json object from extracted object
                     Log.i("Is profile completed", "$isProfileCompleted")
+                    val rating =
+                        profileDetailsObject?.optDouble("rating") // get double (decimal number) from extracted object
+                    Log.i("Rating", "$rating")
 
-                    val dataListArray =
-                        jsonObject.optJSONArray("data_list") // get Array (list) json object
-                    Log.i("Data List Size", "${dataListArray?.length()}") // get size of above array
+                    // Extract an array (list) from inside our main JSON object
+                    val dataListArray = jsonObject.optJSONArray("data_list")
+                    // print size of above array
+                    Log.i("Array List Size", "${dataListArray?.length()}")
+
                     if (dataListArray != null) {
+                        // Iterate through each array element
                         for (item in 0 until dataListArray.length()) {
-                            // print the whole array element
+                            // print the element (object)
                             Log.i("Element $item", "${dataListArray[item]}")
 
-                            val dataItemObject: JSONObject =
-                                dataListArray[item] as JSONObject // get each array item
+                            // extract each object from inside the array to a JSONObject
+                            val dataItemObject: JSONObject = dataListArray[item] as JSONObject
 
-                            // access and print values inside each array element
+                            // extract and print values inside each object
                             val id = dataItemObject.optInt("id")
                             val value = dataItemObject.optString("value")
                             Log.i("id", "$id")
@@ -172,30 +193,28 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
 
-                    Log.i("", "******************************************")
-
-                    // Read and deconstruct JSON objects (gson library way)
+                    /**
+                     * Read and deconstruct JSON object (GSON library way)
+                     */
+                    Log.i("", "*********************************************************")
+                    Log.i("", "Deconstructing JSON object using GSON library method")
                     val responseData = Gson().fromJson(result, ResponseData::class.java)
                     Log.i("Message", responseData.message)
                     Log.i("user_id", "${responseData.user_id}")
                     Log.i("name", responseData.name)
                     Log.i("email", responseData.email)
                     Log.i("mobile", "${responseData.mobile}")
-
                     Log.i(
                         "is profile completed",
                         "${responseData.profile_details.is_profile_completed}"
                     )
                     Log.i("rating", "${responseData.profile_details.rating}")
-
                     Log.i("data_list size", "${responseData.data_list.size}")
 
                     for (item in responseData.data_list.indices) {
                         Log.i("element $item", "${responseData.data_list[item]}")
-
                         Log.i("id", "${responseData.data_list[item].id}")
                         Log.i("value", responseData.data_list[item].value)
-
                     }
 
                 }
@@ -237,7 +256,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun resetUI() {
-        binding.textViewResult.text = "" // print whole json object to UI
+        binding.textViewResult.text = ""
         binding.textViewResult.visibility = View.GONE
         binding.textViewHelloWorld.visibility = View.VISIBLE
         binding.textViewInstructions.visibility = View.VISIBLE
