@@ -45,8 +45,9 @@ class MainActivity : AppCompatActivity() {
 
             showProgressDialog()
 
+            // Launch Coroutine (do work in background)
             lifecycleScope.launch(Dispatchers.IO) {
-                openConnectionAndGetText() // execute code in the background
+                openConnectionAndGetText() // execute function in the background
             }
 
         }
@@ -72,14 +73,18 @@ class MainActivity : AppCompatActivity() {
                 connection.doInput = true
                 connection.doOutput = true
 
-                /* POST / Login code. This code is useless here due to not having a real server to
-                log in to. You can use this code to log into an API server later on */
+                /**
+                 * POST or login code. This code is useless for now due to not having a real server
+                 * to log in to. You can use this code to log into an API server later on.
+                 */
+                // Set connection properties
                 connection.instanceFollowRedirects = false
                 connection.requestMethod = "POST" // can set any request method, eg. GET, POST, etc
                 connection.setRequestProperty("Content-Type", "application/json")
                 connection.setRequestProperty("charset", "utf-8")
                 connection.setRequestProperty("Accept", "application/json")
                 connection.useCaches = false
+                // Prepare and send data to remote server
                 val writeDataOutputStream = DataOutputStream(connection.outputStream)
                 val jsonRequest = JSONObject()
                 jsonRequest.put("username", username)

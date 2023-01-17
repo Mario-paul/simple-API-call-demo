@@ -1,5 +1,8 @@
 package com.example.simpleapicalldemo
 
+/**
+ * Data classes for Gson to use as models when converting JSON to java object
+ */
 data class ResponseData(
     val message: String,
     val user_id: Int,
