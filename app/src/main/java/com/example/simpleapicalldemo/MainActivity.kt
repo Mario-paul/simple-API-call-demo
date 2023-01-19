@@ -222,6 +222,7 @@ class MainActivity : AppCompatActivity() {
                         Log.i("value", responseData.data_list[item].value)
                     }
 
+                        Log.i("WHOLE BODY", responseData.toString())
                 }
 
             } catch (e: SocketTimeoutException) {
